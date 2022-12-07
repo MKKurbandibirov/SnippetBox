@@ -1,24 +1,55 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 )
 
-func main() {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", home)
-	mux.HandleFunc("/snippet", showSnippets)
-	mux.HandleFunc("/snippet/create", createSnippet)
+type application struct {
+	errorLog *log.Logger
+	infoLog  *log.Logger
+}
 
-	fileServer := http.FileServer(neuteredFileSystem{http.Dir("/static")})
+type Config struct {
+	Addr      string
+	StaticDir string
+}
+
+func main() {
+	cfg := new(Config)
+	flag.StringVar(&cfg.Addr, "addr", ":80", "Server Address")
+	flag.StringVar(&cfg.StaticDir, "static-dir", "./ui/static", "Directory with static files")
+	flag.Parse()
+
+	infoLog := log.New(os.Stdout, "\u001b[36m[INFO]\u001b[0m\t", log.Ldate|log.Ltime)
+	errorLog := log.New(os.Stderr, "\u001b[31m[ERROR]\u001b[0m\t", log.Ldate|log.Ltime|log.Lshortfile)
+
+	app := &application{
+		errorLog: errorLog,
+		infoLog: infoLog,
+	}
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", app.home)
+	mux.HandleFunc("/snippet", app.showSnippets)
+	mux.HandleFunc("/snippet/create", app.createSnippet)
+
+	fileServer := http.FileServer(neuteredFileSystem{http.Dir(cfg.StaticDir)})
 	mux.Handle("/static", http.NotFoundHandler())
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
-	log.Println("Start!")
-	err := http.ListenAndServe(":4000", mux)
-	log.Fatal(err)
+	srv := &http.Server{
+		Addr:     cfg.Addr,
+		ErrorLog: errorLog,
+		Handler:  mux,
+	}
+
+	infoLog.Printf("Server Start! at %s", cfg.Addr)
+	err := srv.ListenAndServe()
+	errorLog.Fatal(err)
 }
 
 type neuteredFileSystem struct {
