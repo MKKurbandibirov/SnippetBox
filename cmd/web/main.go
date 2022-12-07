@@ -31,7 +31,6 @@ func main() {
 	cfg := new(Config)
 	flag.StringVar(&cfg.Addr, "addr", ":80", "Server Address")
 	flag.StringVar(&cfg.StaticDir, "static-dir", "./ui/static", "Directory with static files")
-	// flag.StringVar(&cfg.DSN, "dsn", "web:1111@localhost:5432/SnippetBox", "Database source data")
 	flag.StringVar(&cfg.DBHost, "host", "localhost", "The Hosy to connect to")
 	flag.StringVar(&cfg.DBPort, "port", "5432", "The Port to bind to")
 	flag.StringVar(&cfg.DBUser, "user", "web", "The user to sign in as")
