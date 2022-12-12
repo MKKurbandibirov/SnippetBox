@@ -34,7 +34,6 @@ func (sm *SnippetModel) Insert(title, content string, expired int) (int, error) 
 
 	var id int
 	if err := sm.DB.QueryRow(stmt, title, content).Scan(&id); err != nil {
-		println("hhdhdhdhdhdhdhdhhdhdhdhhdh")
 		return 0, err
 	}
 

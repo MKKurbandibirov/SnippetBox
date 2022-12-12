@@ -1,8 +1,25 @@
 {{template "base" .}}
-
-{{define "title"}}Home Page{{end}}
-
+ 
+{{define "title"}}Home page{{end}}
+ 
 {{define "main"}}
-<h2>Last snippets</h2>
-<p>There is empty here!</p>
+    <h2>Last snippets</h2>
+    {{if .Snippets}}
+     <table>
+        <tr>
+            <th>Title</th>
+            <th>Created</th>
+            <th>ID</th>
+        </tr>
+        {{range .Snippets}}
+        <tr>
+            <td><a href='/snippet?id={{.ID}}'>{{.Title}}</a></td>
+            <td>{{.Created.Format "2006-01-02"}}</td>
+            <td>#{{.ID}}</td>
+        </tr>
+        {{end}}
+    </table>
+    {{else}}
+        <p>There is nothing here ... yet!</p>
+    {{end}}
 {{end}}
