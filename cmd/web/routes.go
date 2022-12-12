@@ -11,6 +11,6 @@ func (app *application) routes(cfg *Config) *http.ServeMux {
 	fileServer := http.FileServer(neuteredFileSystem{http.Dir(cfg.StaticDir)})
 	mux.Handle("/static", http.NotFoundHandler())
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
-	
+
 	return mux
 }
