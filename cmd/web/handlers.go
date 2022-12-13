@@ -54,6 +54,7 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Fix this
 	title := "История про улитку"
 	content := "Улитка выползла из раковины,\nвытянула рожки,\nи опять подобрала их."
 	expired := 7
