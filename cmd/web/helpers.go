@@ -13,6 +13,13 @@ func (app *application) serverError(w http.ResponseWriter, e error) {
 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }
 
+func (app *application) wrongArg(w http.ResponseWriter, e error) {
+	trace := fmt.Sprintf("%s\n%s", e.Error(), debug.Stack())
+	app.errorLog.Output(2, trace)
+
+	http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+}
+
 func (app *application) clientError(w http.ResponseWriter, status int) {
 	http.Error(w, http.StatusText(status), status)
 }

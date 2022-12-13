@@ -29,7 +29,7 @@ func (sm *SnippetModel) Get(id int) (*models.Snippet, error) {
 	return s, nil
 }
 
-func (sm *SnippetModel) Insert(title, content string, expired int) (int, error) {
+func (sm *SnippetModel) Insert(title, content string) (int, error) {
 	stmt := `INSERT INTO snippets(title, content, created, expired) VALUES ($1, $2, current_date, current_date + 7) RETURNING id`
 
 	var id int

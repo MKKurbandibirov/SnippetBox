@@ -54,16 +54,29 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Fix this
-	title := "История про улитку"
-	content := "Улитка выползла из раковины,\nвытянула рожки,\nи опять подобрала их."
-	expired := 7
+	title := r.FormValue("title")
+	content := r.FormValue("content")
+	num, err := strconv.Atoi(r.FormValue("expires"))
+	if err != nil {
+		app.wrongArg(w, err)
+		return
+	}
 
-	id, err := app.snippets.Insert(title, content, expired)
+	id, err := app.snippets.Insert(title, content)
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
-
+	
 	http.Redirect(w, r, fmt.Sprintf("/snippet?id=%d", id), http.StatusSeeOther)
+
+	s := &models.Snippet{
+		ID: num,
+		Title: title,
+		Content: content,
+	}
+
+	app.render(w, r, "show.page.tmpl", &templateData{
+		Snippet: s,
+	})
 }
